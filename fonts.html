@@ -35,6 +35,30 @@
       font-weight: 700;
       font-display: swap;
     }
+    @font-face {
+      font-family: "Caveat";
+      src: url("fonts/caveat.woff2") format("woff2");
+      font-weight: 400 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Dancing Script";
+      src: url("fonts/dancingscript.woff2") format("woff2");
+      font-weight: 400 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Pacifico";
+      src: url("fonts/pacifico.woff2") format("woff2");
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    /* cursive fonts run small — give them a little boost so it's a fair fight */
+    .cursive-lg .sample h2 { font-size: 1.8rem; }
+    .cursive-lg .sample .sub { font-size: 1.25rem; }
+    .cursive-lg .sample .body { font-size: 1.15rem; }
+    .cursive-lg .sample .btn { font-size: 1.1rem; }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -138,7 +162,7 @@
 <body>
   <div class="intro">
     <h1>👑 Font Tasting 👑</h1>
-    <p>Which letters should your app wear? Read each card out loud, then crown ONE winner and tell Dad!</p>
+    <p>Which letters should your app wear? Read each card out loud, then crown ONE winner and tell Dad! (New: №6–№9 are the cursive-ish ones you asked for! 🩷)</p>
   </div>
 
   <div id="cards">
@@ -191,6 +215,50 @@
       <div class="sample">
         <h2>🎨 Alexandra's Art Studio 🩷</h2>
         <p class="sub">How To Draw A Baby Axolotl</p>
+        <p class="body">Draw an axolotl having a birthday party on the moon! Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</p>
+        <span class="btn">✨ Spin an idea! ✨</span>
+      </div>
+      <button class="crown">👑 This one!</button>
+    </div>
+
+    <div class="fontcard cursive-lg" data-font="Swoopy (Caveat)" style="font-family: 'Caveat', cursive;">
+      <p class="fontname">№ 6 · “SWOOPY” (Caveat) — cursive-ish!</p>
+      <div class="sample">
+        <h2>🎨 Alexandra's Art Studio 🩷</h2>
+        <p class="sub">How To Draw A Baby Axolotl</p>
+        <p class="body">Draw an axolotl having a birthday party on the moon! Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</p>
+        <span class="btn">✨ Spin an idea! ✨</span>
+      </div>
+      <button class="crown">👑 This one!</button>
+    </div>
+
+    <div class="fontcard cursive-lg" data-font="Fancy (Dancing Script)" style="font-family: 'Dancing Script', cursive;">
+      <p class="fontname">№ 7 · “FANCY” (Dancing Script) — real cursive!</p>
+      <div class="sample">
+        <h2>🎨 Alexandra's Art Studio 🩷</h2>
+        <p class="sub">How To Draw A Baby Axolotl</p>
+        <p class="body">Draw an axolotl having a birthday party on the moon! Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</p>
+        <span class="btn">✨ Spin an idea! ✨</span>
+      </div>
+      <button class="crown">👑 This one!</button>
+    </div>
+
+    <div class="fontcard cursive-lg" data-font="Wavy (Pacifico)" style="font-family: 'Pacifico', cursive;">
+      <p class="fontname">№ 8 · “WAVY” (Pacifico) — surf-shop cursive!</p>
+      <div class="sample">
+        <h2>🎨 Alexandra's Art Studio 🩷</h2>
+        <p class="sub">How To Draw A Baby Axolotl</p>
+        <p class="body">Draw an axolotl having a birthday party on the moon! Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</p>
+        <span class="btn">✨ Spin an idea! ✨</span>
+      </div>
+      <button class="crown">👑 This one!</button>
+    </div>
+
+    <div class="fontcard" data-font="Fancy Mix (Dancing Script titles + Fredoka words)" style="font-family: 'Fredoka', sans-serif;">
+      <p class="fontname">№ 9 · “FANCY MIX” — cursive titles, easy-reading words (how the pros do it)</p>
+      <div class="sample">
+        <h2 style="font-family: 'Dancing Script', cursive; font-size: 2rem;">🎨 Alexandra's Art Studio 🩷</h2>
+        <p class="sub" style="font-family: 'Dancing Script', cursive; font-size: 1.3rem;">How To Draw A Baby Axolotl</p>
         <p class="body">Draw an axolotl having a birthday party on the moon! Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</p>
         <span class="btn">✨ Spin an idea! ✨</span>
       </div>
