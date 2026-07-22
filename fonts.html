@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Font Tasting — Alexandra's Art Studio</title>
+  <style>
+    @font-face {
+      font-family: "Fredoka";
+      src: url("fonts/fredoka.woff2") format("woff2");
+      font-weight: 300 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Baloo 2";
+      src: url("fonts/baloo2.woff2") format("woff2");
+      font-weight: 400 800;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Patrick Hand";
+      src: url("fonts/patrickhand-400.woff2") format("woff2");
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Comic Neue";
+      src: url("fonts/comicneue-400.woff2") format("woff2");
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Comic Neue";
+      src: url("fonts/comicneue-700.woff2") format("woff2");
+      font-weight: 700;
+      font-display: swap;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Comic Sans MS", "Chalkboard SE", "Marker Felt", sans-serif;
+      background: linear-gradient(135deg, #ffd6e8 0%, #d6eaff 50%, #fff3c4 100%);
+      background-attachment: fixed;
+      min-height: 100dvh;
+      color: #3a2e39;
+      padding: calc(14px + env(safe-area-inset-top)) 14px calc(90px + env(safe-area-inset-bottom));
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .intro {
+      max-width: 640px;
+      margin: 0 auto 16px;
+      text-align: center;
+    }
+
+    .intro h1 { color: #8b4bc7; font-size: 1.5rem; margin-bottom: 6px; }
+    .intro p { color: #b06a8c; font-size: 0.95rem; }
+
+    .fontcard {
+      max-width: 640px;
+      margin: 0 auto 16px;
+      background: rgba(255, 255, 255, 0.93);
+      border: 4px solid transparent;
+      border-radius: 20px;
+      box-shadow: 0 4px 18px rgba(120, 80, 160, 0.18);
+      padding: 18px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .fontcard.picked {
+      border-color: #ff8fab;
+      transform: scale(1.015);
+    }
+
+    .fontname {
+      font-size: 0.78rem;
+      color: #a58d9a;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      font-family: "Comic Sans MS", "Chalkboard SE", sans-serif;
+    }
+
+    .sample h2 { font-size: 1.5rem; color: #8b4bc7; margin-bottom: 6px; font-weight: 700; }
+    .sample .sub { color: #d6537d; font-size: 1.05rem; margin-bottom: 8px; }
+    .sample .body {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .sample .btn {
+      display: inline-block;
+      background: #ff8fab;
+      color: #fff;
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    .crown {
+      display: block;
+      width: 100%;
+      font-family: inherit;
+      font-size: 1.05rem;
+      margin-top: 10px;
+      padding: 12px;
+      border: 3px dashed #ffc9d9;
+      background: #fff8fb;
+      color: #d6537d;
+      border-radius: 14px;
+      cursor: pointer;
+    }
+
+    .picked .crown {
+      background: #ff8fab;
+      color: #fff;
+      border-style: solid;
+      border-color: #ff8fab;
+    }
+
+    #verdict {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 -2px 14px rgba(120, 80, 160, 0.2);
+      text-align: center;
+      padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+      font-size: 1rem;
+      color: #d6537d;
+      display: none;
+    }
+    #verdict.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="intro">
+    <h1>👑 Font Tasting 👑</h1>
+    <p>Which letters should your app wear? Read each card out loud, then crown ONE winner and tell Dad!</p>
+  </div>
+
+  <div id="cards">
+    <div class="fontcard" data-font="Bouncy (Fredoka)" style="font-family: 'Fredoka', sans-serif;">
+      <p class="fontname">№ 1 · “BOUNCY” (Fredoka)</p>
+      <div class="sample">
+        <h2>🎨 Alexandra's Art Studio 🩷</h2>
+        <p class="sub">How To Draw A Baby Axolotl</p>
+        <p class="body">Draw an axolotl having a birthday party on the moon! Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</p>
+        <span class="btn">✨ Spin an idea! ✨</span>
+      </div>
+      <button class="crown">👑 This one!</button>
+    </div>
+
+    <div class="fontcard" data-font="Chalky (what it looks like now)" style="font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;">
+      <p class="fontname">№ 2 · “CHALKY” (what your app wears now)</p>
+      <div class="sample">
+        <h2>🎨 Alexandra's Art Studio 🩷</h2>
+        <p class="sub">How To Draw A Baby Axolotl</p>
+        <p class="body">Draw an axolotl having a birthday party on the moon! Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</p>
+        <span class="btn">✨ Spin an idea! ✨</span>
+      </div>
+      <button class="crown">👑 This one!</button>
+    </div>
+
+    <div class="fontcard" data-font="Scribbles (Patrick Hand)" style="font-family: 'Patrick Hand', cursive;">
+      <p class="fontname">№ 3 · “SCRIBBLES” (Patrick Hand)</p>
+      <div class="sample">
+        <h2>🎨 Alexandra's Art Studio 🩷</h2>
+        <p class="sub">How To Draw A Baby Axolotl</p>
+        <p class="body">Draw an axolotl having a birthday party on the moon! Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</p>
+        <span class="btn">✨ Spin an idea! ✨</span>
+      </div>
+      <button class="crown">👑 This one!</button>
+    </div>
+
+    <div class="fontcard" data-font="Chunky (Baloo 2)" style="font-family: 'Baloo 2', sans-serif;">
+      <p class="fontname">№ 4 · “CHUNKY” (Baloo 2)</p>
+      <div class="sample">
+        <h2>🎨 Alexandra's Art Studio 🩷</h2>
+        <p class="sub">How To Draw A Baby Axolotl</p>
+        <p class="body">Draw an axolotl having a birthday party on the moon! Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</p>
+        <span class="btn">✨ Spin an idea! ✨</span>
+      </div>
+      <button class="crown">👑 This one!</button>
+    </div>
+
+    <div class="fontcard" data-font="Comic 2.0 (Comic Neue)" style="font-family: 'Comic Neue', sans-serif;">
+      <p class="fontname">№ 5 · “COMIC 2.0” (Comic Neue)</p>
+      <div class="sample">
+        <h2>🎨 Alexandra's Art Studio 🩷</h2>
+        <p class="sub">How To Draw A Baby Axolotl</p>
+        <p class="body">Draw an axolotl having a birthday party on the moon! Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</p>
+        <span class="btn">✨ Spin an idea! ✨</span>
+      </div>
+      <button class="crown">👑 This one!</button>
+    </div>
+  </div>
+
+  <div id="verdict"></div>
+
+  <script>
+    "use strict";
+    const KEY = "aas_font_pick";
+    const verdict = document.getElementById("verdict");
+
+    function crown(card) {
+      document.querySelectorAll(".fontcard").forEach((c) => c.classList.remove("picked"));
+      card.classList.add("picked");
+      verdict.textContent = "👑 You picked: " + card.dataset.font + " — tell Dad! 🩷";
+      verdict.classList.add("show");
+      try { localStorage.setItem(KEY, card.dataset.font); } catch {}
+    }
+
+    document.querySelectorAll(".crown").forEach((btn) => {
+      btn.addEventListener("click", () => crown(btn.closest(".fontcard")));
+    });
+
+    const saved = localStorage.getItem(KEY);
+    if (saved) {
+      const card = document.querySelector(`.fontcard[data-font="${saved}"]`);
+      if (card) crown(card);
+    }
+  </script>
+</body>
+</html>
