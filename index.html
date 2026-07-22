@@ -2,8 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Alexandra's Art Studio</title>
+
+  <!-- Home-screen app (iOS Safari: Share → Add to Home Screen) -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Art Studio">
+  <meta name="theme-color" content="#ffd6e8">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -11,10 +21,16 @@
       font-family: "Comic Sans MS", "Chalkboard SE", "Marker Felt", sans-serif;
       background: linear-gradient(135deg, #ffd6e8 0%, #d6eaff 50%, #fff3c4 100%);
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      /* keep content clear of the notch and home indicator in full-screen mode */
+      padding: calc(16px + env(safe-area-inset-top))
+               calc(16px + env(safe-area-inset-right))
+               calc(16px + env(safe-area-inset-bottom))
+               calc(16px + env(safe-area-inset-left));
+      -webkit-tap-highlight-color: transparent;
     }
 
     .card {
@@ -76,11 +92,23 @@
 
     .fallback {
       margin-top: 14px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: #888;
     }
 
-    .fallback a { color: #8b4bc7; }
+    .fallback a {
+      color: #8b4bc7;
+      /* comfortable tap target on a phone */
+      display: inline-block;
+      padding: 8px 4px;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 22px 16px; border-radius: 18px; }
+      h1 { font-size: 1.6rem; }
+      .subtitle { font-size: 1rem; margin-bottom: 18px; }
+      .video-wrap { border-radius: 12px; }
+    }
   </style>
 </head>
 <body>
