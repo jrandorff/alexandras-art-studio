@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alexandra's Art Studio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Comic Sans MS", "Chalkboard SE", "Marker Felt", sans-serif;
+      background: linear-gradient(135deg, #ffd6e8 0%, #d6eaff 50%, #fff3c4 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(120, 80, 160, 0.25);
+      max-width: 760px;
+      width: 100%;
+      padding: 32px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #8b4bc7;
+      font-size: 2.2rem;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      color: #e07aab;
+      font-size: 1.1rem;
+      margin-bottom: 24px;
+    }
+
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 */
+      border-radius: 16px;
+      overflow: hidden;
+      background: #222;
+      margin-bottom: 16px;
+    }
+
+    .video-wrap iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: 0;
+    }
+
+    .video-title {
+      color: #555;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    #status {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      background: #eee;
+      color: #666;
+    }
+
+    #status.ok    { background: #d9f7d9; color: #1d7a1d; }
+    #status.blocked { background: #ffe0e0; color: #b02020; }
+
+    .fallback {
+      margin-top: 14px;
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    .fallback a { color: #8b4bc7; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>🎨 Alexandra's Art Studio 🖌️</h1>
+    <p class="subtitle">Hello, world! This is the very first page of my art app.</p>
+
+    <div class="video-wrap">
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/r6cJl89axqY"
+        title="How To Draw A Cute Unicorn — Art for Kids Hub"
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
+
+    <p class="video-title">🦄 <strong>How To Draw A Cute Unicorn</strong> — Art for Kids Hub</p>
+
+    <span id="status">Checking if YouTube works on this device…</span>
+
+    <p class="fallback">
+      If the video box above is gray or empty, YouTube is blocked on this device.
+      <a href="https://www.youtube.com/watch?v=r6cJl89axqY" target="_blank" rel="noopener">Direct YouTube link</a>
+    </p>
+  </main>
+
+  <script>
+    // Probe YouTube's image CDN: if the thumbnail loads, YouTube content is
+    // reachable from this network/device. Cache-buster defeats any school proxy cache.
+    (function () {
+      var status = document.getElementById("status");
+      var probe = new Image();
+      var done = false;
+
+      probe.onload = function () {
+        if (done) return; done = true;
+        status.textContent = "✅ YouTube works on this device — the video should play!";
+        status.className = "ok";
+      };
+      probe.onerror = function () {
+        if (done) return; done = true;
+        status.textContent = "❌ YouTube looks blocked on this device or network.";
+        status.className = "blocked";
+      };
+      setTimeout(function () {
+        if (done) return; done = true;
+        status.textContent = "⚠️ YouTube is very slow or filtered on this network.";
+        status.className = "blocked";
+      }, 8000);
+
+      probe.src = "https://i.ytimg.com/vi/r6cJl89axqY/hqdefault.jpg?t=" + Date.now();
+    })();
+  </script>
+</body>
+</html>
