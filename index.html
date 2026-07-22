@@ -14,153 +14,141 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Art Studio">
   <meta name="theme-color" content="#ffd6e8">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      font-family: "Comic Sans MS", "Chalkboard SE", "Marker Felt", sans-serif;
-      background: linear-gradient(135deg, #ffd6e8 0%, #d6eaff 50%, #fff3c4 100%);
-      min-height: 100vh;
-      min-height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* keep content clear of the notch and home indicator in full-screen mode */
-      padding: calc(16px + env(safe-area-inset-top))
-               calc(16px + env(safe-area-inset-right))
-               calc(16px + env(safe-area-inset-bottom))
-               calc(16px + env(safe-area-inset-left));
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: 24px;
-      box-shadow: 0 8px 32px rgba(120, 80, 160, 0.25);
-      max-width: 760px;
-      width: 100%;
-      padding: 32px;
-      text-align: center;
-    }
-
-    h1 {
-      color: #8b4bc7;
-      font-size: 2.2rem;
-      margin-bottom: 4px;
-    }
-
-    .subtitle {
-      color: #e07aab;
-      font-size: 1.1rem;
-      margin-bottom: 24px;
-    }
-
-    .video-wrap {
-      position: relative;
-      width: 100%;
-      padding-bottom: 56.25%; /* 16:9 */
-      border-radius: 16px;
-      overflow: hidden;
-      background: #222;
-      margin-bottom: 16px;
-    }
-
-    .video-wrap iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      border: 0;
-    }
-
-    .video-title {
-      color: #555;
-      font-size: 1rem;
-      margin-bottom: 20px;
-    }
-
-    #status {
-      display: inline-block;
-      padding: 10px 18px;
-      border-radius: 999px;
-      font-size: 0.95rem;
-      background: #eee;
-      color: #666;
-    }
-
-    #status.ok    { background: #d9f7d9; color: #1d7a1d; }
-    #status.blocked { background: #ffe0e0; color: #b02020; }
-
-    .fallback {
-      margin-top: 14px;
-      font-size: 0.9rem;
-      color: #888;
-    }
-
-    .fallback a {
-      color: #8b4bc7;
-      /* comfortable tap target on a phone */
-      display: inline-block;
-      padding: 8px 4px;
-    }
-
-    @media (max-width: 480px) {
-      .card { padding: 22px 16px; border-radius: 18px; }
-      h1 { font-size: 1.6rem; }
-      .subtitle { font-size: 1rem; margin-bottom: 18px; }
-      .video-wrap { border-radius: 12px; }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="card">
-    <h1>🎨 Alexandra's Art Studio 🖌️</h1>
-    <p class="subtitle">Hello, world! This is the very first page of my axolotl-approved art app.</p>
+  <header>
+    <h1>🎨 Alexandra's Art Studio 🩷</h1>
+  </header>
 
-    <div class="video-wrap">
-      <iframe
-        src="https://www.youtube-nocookie.com/embed/2iF-9DAqYu8"
-        title="How To Draw A Baby Axolotl — Art for Kids Hub"
-        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        referrerpolicy="strict-origin-when-cross-origin"></iframe>
-    </div>
+  <main>
+    <!-- ================= VIDEOS ================= -->
+    <section id="view-videos" class="view active">
+      <div id="netwarn">❌ YouTube looks blocked on this device — videos won't play here, but the rest of the app works!</div>
 
-    <p class="video-title">🩷 <strong>How To Draw A Baby Axolotl</strong> — Art for Kids Hub</p>
+      <div class="searchbar">
+        <input id="search" type="search" placeholder="Search drawing videos… (try: axolotl)"
+               autocomplete="off" autocorrect="off" autocapitalize="off">
+      </div>
+      <p class="hint">Searches only Alexandra-approved channels: Art for Kids Hub &amp; Draw So Cute.</p>
 
-    <span id="status">Checking if YouTube works on this device…</span>
+      <div id="favs-section">
+        <p class="section-label">💖 My Favorites <button id="backup-favs" class="tiny-btn">copy my list</button></p>
+        <div id="favs-grid" class="vgrid"></div>
+        <p id="favs-empty" class="empty-note">No favorites yet — tap the 🩷 on any video to save it here!</p>
+      </div>
 
-    <p class="fallback">
-      If the video box above is gray or empty, YouTube is blocked on this device.
-      <a href="https://www.youtube.com/watch?v=2iF-9DAqYu8" target="_blank" rel="noopener">Direct YouTube link</a>
-    </p>
+      <p class="section-label" id="results-label">🩷 Axolotl picks</p>
+      <div id="results-grid" class="vgrid"></div>
+      <p id="more-note" class="more-note"></p>
+    </section>
+
+    <!-- ================= STYLES ================= -->
+    <section id="view-styles" class="view">
+      <div class="panel style-card">
+        <h3>✏️ Realistic</h3>
+        <ul>
+          <li>Draw what you <em>see</em>, not what you know — look at a photo or real thing while you draw.</li>
+          <li>Shading makes things look round: decide where the light comes from, and darken the other side.</li>
+          <li>Sketch light guide lines first, then darken the lines you like best.</li>
+          <li>It's slow — realistic artists take their time and that's normal.</li>
+        </ul>
+        <p class="try">🩷 Try it: find a photo of a real axolotl and draw its actual spots and gill shapes.</p>
+        <button class="findbtn" data-q="realistic">Find videos →</button>
+      </div>
+
+      <div class="panel style-card">
+        <h3>😄 Cartoon</h3>
+        <ul>
+          <li>Big simple shapes: circles, beans, and eggs make the best cartoon bodies.</li>
+          <li>Exaggerate! Huge eyes, tiny feet, giant smiles — cartoons stretch the truth on purpose.</li>
+          <li>Thick, confident outlines make a drawing feel "finished."</li>
+          <li>Flat colors (no shading) are totally allowed here.</li>
+        </ul>
+        <p class="try">🩷 Try it: draw an axolotl as one big bean shape with a huge happy smile.</p>
+        <button class="findbtn" data-q="cartoon">Find videos →</button>
+      </div>
+
+      <div class="panel style-card">
+        <h3>👁️ Manga / Anime</h3>
+        <ul>
+          <li>Eyes are the star: large, shiny, with white sparkle squares in them.</li>
+          <li>Small nose and mouth — sometimes just tiny lines.</li>
+          <li>Hair (or gills!) drawn in pointy sections, like flower petals.</li>
+          <li>Emotions get symbols: sweat drops, sparkles, anger marks.</li>
+        </ul>
+        <p class="try">🩷 Try it: give an axolotl giant sparkly anime eyes and blush lines.</p>
+        <button class="findbtn" data-q="anime">Find videos →</button>
+      </div>
+
+      <div class="panel style-card">
+        <h3>🌊 Watercolor</h3>
+        <ul>
+          <li>Water first, paint second: wet the paper a little and let colors bloom.</li>
+          <li>Light colors first, dark colors last — you can't easily undo dark.</li>
+          <li>Let blobs and drips happen. "Mistakes" become clouds, water, and magic.</li>
+          <li>Let each layer dry before adding details on top (hard, but worth it!).</li>
+        </ul>
+        <p class="try">🩷 Try it: paint a soft pink axolotl blob, let it dry, then add face details with a thin marker.</p>
+        <button class="findbtn" data-q="watercolor">Find videos →</button>
+      </div>
+
+      <div class="panel style-card">
+        <h3>🟪 Pixel Art</h3>
+        <ul>
+          <li>Draw on graph paper: every square is one "pixel" — color squares, never half-squares.</li>
+          <li>Start tiny: 16×16 squares is enough for a whole character.</li>
+          <li>Straight edges and stair-steps are the style, not a mistake.</li>
+          <li>Pick just 3–5 colors before you start.</li>
+        </ul>
+        <p class="try">🩷 Try it: make a 16×16 pixel axolotl — pink squares, two black squares for eyes.</p>
+        <button class="findbtn" data-q="minecraft">Find videos →</button>
+      </div>
+    </section>
+
+    <!-- ================= SUPPLIES ================= -->
+    <section id="view-supplies" class="view">
+      <div class="supply-toggle">
+        <button id="mode-all" class="on">Everything</button>
+        <button id="mode-shop">🛒 Shopping list</button>
+      </div>
+      <div id="supplies-root"></div>
+    </section>
+
+    <!-- ================= IDEAS ================= -->
+    <section id="view-ideas" class="view">
+      <div class="panel">
+        <h2>⭐ Today's Challenge</h2>
+        <p class="daily" id="daily-out">…</p>
+      </div>
+
+      <div class="panel spin-area">
+        <h2>🎰 Idea Machine</h2>
+        <p id="prompt-out">Tap the button and I'll invent something for you to draw!</p>
+        <button id="spin-btn">✨ Spin an idea! ✨</button>
+      </div>
+    </section>
   </main>
 
-  <script>
-    // Probe YouTube's image CDN: if the thumbnail loads, YouTube content is
-    // reachable from this network/device. Cache-buster defeats any school proxy cache.
-    (function () {
-      var status = document.getElementById("status");
-      var probe = new Image();
-      var done = false;
+  <!-- player modal -->
+  <div id="player-modal">
+    <div class="player-box">
+      <div class="frame-wrap" id="frame-wrap"></div>
+      <div class="player-bar">
+        <span class="ptitle" id="player-title"></span>
+        <button id="player-close">Done ✔️</button>
+      </div>
+    </div>
+  </div>
 
-      probe.onload = function () {
-        if (done) return; done = true;
-        status.textContent = "✅ YouTube works on this device — the video should play!";
-        status.className = "ok";
-      };
-      probe.onerror = function () {
-        if (done) return; done = true;
-        status.textContent = "❌ YouTube looks blocked on this device or network.";
-        status.className = "blocked";
-      };
-      setTimeout(function () {
-        if (done) return; done = true;
-        status.textContent = "⚠️ YouTube is very slow or filtered on this network.";
-        status.className = "blocked";
-      }, 8000);
+  <nav>
+    <button data-view="videos" class="active"><span class="ico">🎬</span>Videos</button>
+    <button data-view="styles"><span class="ico">🎨</span>Styles</button>
+    <button data-view="supplies"><span class="ico">🖍️</span>Supplies</button>
+    <button data-view="ideas"><span class="ico">💡</span>Ideas</button>
+  </nav>
 
-      probe.src = "https://i.ytimg.com/vi/2iF-9DAqYu8/hqdefault.jpg?t=" + Date.now();
-    })();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

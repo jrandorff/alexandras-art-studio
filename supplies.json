@@ -1,0 +1,44 @@
+{
+  "_note": "Check off what you already have. The shopping list shows only what's missing.",
+  "groups": [
+    {
+      "name": "Starter Kit",
+      "emoji": "🎒",
+      "items": [
+        { "id": "pencils", "emoji": "✏️", "name": "Drawing pencils (HB + 2B)" },
+        { "id": "eraser", "emoji": "🩹", "name": "Good eraser (white vinyl)" },
+        { "id": "sharpener", "emoji": "🌀", "name": "Pencil sharpener with a lid" },
+        { "id": "sketchbook", "emoji": "📓", "name": "Sketchbook (at least 50 pages)" },
+        { "id": "markers", "emoji": "🖊️", "name": "Washable markers" },
+        { "id": "crayons", "emoji": "🖍️", "name": "Crayons or colored pencils" },
+        { "id": "blackpen", "emoji": "🖋️", "name": "Black outline pen (fine tip)" }
+      ]
+    },
+    {
+      "name": "Nice To Have",
+      "emoji": "✨",
+      "items": [
+        { "id": "watercolors", "emoji": "🎨", "name": "Watercolor paint set (pan style)" },
+        { "id": "brushes", "emoji": "🖌️", "name": "Brushes: one big, one medium, one tiny" },
+        { "id": "wcpaper", "emoji": "📄", "name": "Watercolor paper (thick!)" },
+        { "id": "watercup", "emoji": "🥛", "name": "Water cup that won't tip over" },
+        { "id": "kneaded", "emoji": "🫧", "name": "Kneaded eraser (the squishy kind)" },
+        { "id": "graphpaper", "emoji": "🟪", "name": "Graph paper (for pixel art)" },
+        { "id": "gelpens", "emoji": "🌈", "name": "Gel pens (white one is magic on dark paper)" },
+        { "id": "apron", "emoji": "🥼", "name": "Art apron or old T-shirt" }
+      ]
+    },
+    {
+      "name": "Dream List",
+      "emoji": "🌟",
+      "items": [
+        { "id": "alcoholmarkers", "emoji": "💎", "name": "Alcohol markers (like Ohuhu)" },
+        { "id": "gouache", "emoji": "🧁", "name": "Gouache paint set" },
+        { "id": "easel", "emoji": "🪜", "name": "Tabletop easel" },
+        { "id": "artdesk", "emoji": "🪑", "name": "Art desk with a tilting top" },
+        { "id": "poscas", "emoji": "🖍", "name": "Paint pens (Posca style)" },
+        { "id": "canvas", "emoji": "🖼️", "name": "Real canvases for painting" }
+      ]
+    }
+  ]
+}
