@@ -31,13 +31,16 @@ editable data files:
 
 ## Refreshing the video index
 
-The approved-channels list lives in `tools/build_video_index.py`. To pull the
-channels' newest videos into the search index:
+**It refreshes itself**: a GitHub Action (`.github/workflows/refresh-videos.yml`)
+re-fetches the channels every Monday and commits `videos.json` if anything
+changed. A sanity check refuses to commit a suspiciously small index, so a bad
+fetch can never break search — worst case it catches up the following week.
+You can also trigger it any time from the repo's Actions tab ("Run workflow").
+
+The approved-channels list lives in `tools/build_video_index.py` — add a channel
+there and the weekly refresh picks it up. Manual fallback (needs `brew install yt-dlp`):
 
 ```bash
-brew install yt-dlp   # once
 python3 tools/build_video_index.py
 git add videos.json && git commit -m "Refresh video index" && git push
 ```
-
-Takes a few minutes; do it every month or two.
