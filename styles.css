@@ -321,6 +321,7 @@ main {
 .supply-item {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
   padding: 9px 4px;
   border-bottom: 1px dashed #f0d7e2;
@@ -329,14 +330,24 @@ main {
 
 .supply-item:last-child { border-bottom: none; }
 
-.supply-item input[type="checkbox"] {
-  width: 22px;
-  height: 22px;
-  accent-color: var(--pink);
-  flex-shrink: 0;
+.supply-item.have label { text-decoration: line-through; color: #b9a2ae; }
+
+.pills { display: flex; gap: 6px; flex-shrink: 0; }
+
+.pill {
+  font: inherit;
+  font-size: 0.72rem;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 2px solid #eddbe4;
+  background: #fff;
+  color: #a58d9a;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
-.supply-item.have label { text-decoration: line-through; color: #b9a2ae; }
+.pill.on-have { background: #d9f7d9; border-color: #7bc77b; color: #1d7a1d; }
+.pill.on-need { background: #ffe0ec; border-color: var(--pink); color: var(--pink-dark); }
 
 /* ---------- Ideas ---------- */
 

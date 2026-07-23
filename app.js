@@ -7,14 +7,22 @@
 const $ = (sel) => document.querySelector(sel);
 
 const LS_FAVS = "aas_favs_v1";
-const LS_SUPPLIES = "aas_supplies_v1";
+const LS_SUPPLIES = "aas_supplies_v2"; // values: "have" | "need" (unset = neither)
 
 let VIDEOS = [];   // {id, t (title), c (channel index)}
 let CHANNELS = []; // channel display names
 let PROMPTS = { subjects: [], twists: [], settings: [], daily: [] };
 let favs = load(LS_FAVS, []);
-let haveSupplies = load(LS_SUPPLIES, {});
+let supplyState = load(LS_SUPPLIES, null);
+if (!supplyState) {
+  // migrate v1 checkboxes: checked meant "have it"
+  const v1 = load("aas_supplies_v1", {});
+  supplyState = {};
+  for (const k in v1) if (v1[k]) supplyState[k] = "have";
+  save(LS_SUPPLIES, supplyState);
+}
 let shopMode = false;
+let supplyNames = {}; // id -> short name, for Idea Machine suggestions
 
 function load(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
@@ -87,6 +95,8 @@ function renderResults() {
     list = VIDEOS.filter((v) => v.t.toLowerCase().includes("axolotl"));
     label = "🩷 Axolotl picks";
   }
+  // searching takes over the screen; favorites come back when the box is cleared
+  $("#favs-section").style.display = q ? "none" : "";
   const shown = list.slice(0, MAX_RESULTS);
   $("#results-label").textContent = label;
   $("#results-grid").innerHTML = shown.map(cardHTML).join("");
@@ -166,25 +176,31 @@ function renderSupplies(groups) {
   root.innerHTML = groups
     .map((g) => {
       const items = g.items
-        .filter((it) => !shopMode || !haveSupplies[it.id])
+        .filter((it) => !shopMode || supplyState[it.id] === "need")
         .map((it) => {
-          const have = !!haveSupplies[it.id];
+          const st = supplyState[it.id] || "";
           return `
-            <div class="supply-item ${have ? "have" : ""}">
-              <input type="checkbox" id="sup-${it.id}" data-id="${it.id}" ${have ? "checked" : ""}>
-              <label for="sup-${it.id}">${it.emoji} ${escapeHTML(it.name)}</label>
+            <div class="supply-item ${st}">
+              <label>${it.emoji} ${escapeHTML(it.name)}</label>
+              <span class="pills">
+                <button class="pill ${st === "have" ? "on-have" : ""}" data-id="${it.id}" data-set="have">✔️ Have</button>
+                <button class="pill ${st === "need" ? "on-need" : ""}" data-id="${it.id}" data-set="need">🛒 Need</button>
+              </span>
             </div>`;
         })
         .join("");
       if (shopMode && !items) return "";
       return `<div class="panel"><h2>${g.emoji} ${escapeHTML(g.name)}</h2>${items || ""}</div>`;
     })
-    .join("") || `<div class="panel"><h2>🎉 You have everything on the list!</h2></div>`;
+    .join("") || `<div class="panel"><h2>🎉 Nothing on the shopping list!</h2></div>`;
 
-  root.querySelectorAll("input[type=checkbox]").forEach((cb) => {
-    cb.addEventListener("change", () => {
-      haveSupplies[cb.dataset.id] = cb.checked;
-      save(LS_SUPPLIES, haveSupplies);
+  root.querySelectorAll(".pill").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const { id, set } = btn.dataset;
+      // tap toggles; Have and Need are mutually exclusive
+      if (supplyState[id] === set) delete supplyState[id];
+      else supplyState[id] = set;
+      save(LS_SUPPLIES, supplyState);
       renderSupplies(groups);
     });
   });
@@ -212,6 +228,12 @@ $("#spin-btn").addEventListener("click", () => {
     if (++ticks >= 9) {
       clearInterval(timer);
       out.classList.remove("spinning");
+      // sometimes suggest making it with a supply she actually has
+      const haves = Object.keys(supplyState)
+        .filter((id) => supplyState[id] === "have" && supplyNames[id]);
+      if (haves.length && Math.random() < 0.5) {
+        out.textContent += ` — and maybe make it with your ${supplyNames[pick(haves, Math.random)]}! 🎨`;
+      }
     }
   }, 90);
 });
@@ -237,6 +259,10 @@ Promise.all([
   CHANNELS = vids.channels;
   VIDEOS = vids.videos;
   PROMPTS = prompts;
+  supplies.groups.forEach((g) => g.items.forEach((it) => {
+    // "Watercolor paint set (pan style)" -> "watercolor paint set"
+    supplyNames[it.id] = it.name.split("(")[0].trim().toLowerCase();
+  }));
   renderFavs();
   renderResults();
   renderSupplies(supplies.groups);

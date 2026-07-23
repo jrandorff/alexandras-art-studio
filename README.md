@@ -12,7 +12,9 @@ checklists, and inspiration. Axolotl-themed by order of the client.
   channels (Art for Kids Hub, Draw So Cute). Tap 🩷 to save favorites
   (stored in the browser; "copy my list" backs them up to the clipboard).
 - **🎨 Styles** — how to draw realistic / cartoon / manga / watercolor / pixel art.
-- **🖍️ Supplies** — checklist with a shopping-list view (shows only what's missing).
+- **🖍️ Supplies** — mark each item **✔️ Have** or **🛒 Need**; the shopping-list view
+  shows only Need items, and the Idea Machine sometimes suggests making an idea
+  with a supply you have.
 - **💡 Ideas** — a daily drawing challenge + the Idea Machine
   (subject + twist + setting spinner).
 
