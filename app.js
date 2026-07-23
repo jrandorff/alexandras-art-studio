@@ -76,6 +76,21 @@ function renderFavs() {
   $("#backup-favs").style.display = favVideos.length ? "inline" : "none";
 }
 
+// alternate results between channels so no channel can crowd the other out of
+// the first page (the index lists whole channels back-to-back)
+function interleave(list) {
+  const groups = new Map();
+  list.forEach((v) => {
+    if (!groups.has(v.c)) groups.set(v.c, []);
+    groups.get(v.c).push(v);
+  });
+  const gs = [...groups.values()];
+  const out = [];
+  for (let i = 0; gs.some((g) => i < g.length); i++)
+    for (const g of gs) if (i < g.length) out.push(g[i]);
+  return out;
+}
+
 function search(query) {
   const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
   if (!tokens.length) return [];
@@ -97,7 +112,7 @@ function renderResults() {
   }
   // searching takes over the screen; favorites come back when the box is cleared
   $("#favs-section").style.display = q ? "none" : "";
-  const shown = list.slice(0, MAX_RESULTS);
+  const shown = interleave(list).slice(0, MAX_RESULTS);
   $("#results-label").textContent = label;
   $("#results-grid").innerHTML = shown.map(cardHTML).join("");
   $("#more-note").textContent =
