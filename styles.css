@@ -40,6 +40,19 @@ header {
 header h1 {
   color: var(--purple);
   font-size: 1.45rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+header .logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px; /* mini app-icon look */
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(120, 80, 160, 0.3);
+  flex-shrink: 0;
 }
 
 main {
