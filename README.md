@@ -29,6 +29,19 @@ editable data files:
 | `prompts.json` | Idea Machine words + daily challenges — **add your own!** |
 | `supplies.json` | The supplies checklist |
 
+## Syncing favorites & supplies between devices
+
+Favorites and supply check-offs live in each device's browser. To move them:
+
+- **🔄 sync button** (next to My Favorites): shows a QR code — scan it with the
+  other device's camera (or copy the sync link and send it). Opening the link
+  merges everything in. All data travels inside the link itself; no server.
+- **Chromebook** (can't receive links or scan): commit her favorites into
+  `family-state.json` in this repo (`{"f": ["videoId1", "videoId2", …]}` — the
+  "copy my list" button exports the full objects; take the `id` values).
+  Every device then starts with those favorites baked in, school included.
+  Un-hearting a baked-in favorite hides it on that device only.
+
 ## Refreshing the video index
 
 **It refreshes itself**: a GitHub Action (`.github/workflows/refresh-videos.yml`)

@@ -16,7 +16,7 @@
   <meta name="theme-color" content="#ffd6e8">
 
   <!-- bump ?v= on each deploy that changes these files: defeats stale browser caches -->
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <header>
@@ -35,7 +35,10 @@
       <p class="hint">Searches only Alexandra-approved channels: Art for Kids Hub &amp; Draw So Cute.</p>
 
       <div id="favs-section">
-        <p class="section-label">💖 My Favorites <button id="backup-favs" class="tiny-btn">copy my list</button></p>
+        <p class="section-label">💖 My Favorites
+          <button id="sync-open" class="tiny-btn">🔄 sync</button>
+          <button id="backup-favs" class="tiny-btn">copy my list</button>
+        </p>
         <div id="favs-grid" class="vgrid"></div>
         <p id="favs-empty" class="empty-note">No favorites yet — tap the 🩷 on any video to save it here!</p>
       </div>
@@ -132,6 +135,17 @@
     </section>
   </main>
 
+  <!-- sync modal -->
+  <div id="sync-modal">
+    <div class="sync-box">
+      <h2>🔄 Sync to another device</h2>
+      <div id="qr-slot"><p class="qr-note">QR code coming soon!</p></div>
+      <p class="sync-note">Scan the code with the other device's camera, or send the link:</p>
+      <button id="sync-copy">📋 Copy sync link</button>
+      <button id="sync-close">Done ✔️</button>
+    </div>
+  </div>
+
   <!-- player modal -->
   <div id="player-modal">
     <div class="player-box">
@@ -150,6 +164,7 @@
     <button data-view="ideas"><span class="ico">💡</span>Ideas</button>
   </nav>
 
-  <script src="app.js?v=4"></script>
+  <script src="qrcode.min.js"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

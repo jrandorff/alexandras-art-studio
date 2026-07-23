@@ -12,7 +12,11 @@ const LS_SUPPLIES = "aas_supplies_v2"; // values: "have" | "need" (unset = neith
 let VIDEOS = [];   // {id, t (title), c (channel index)}
 let CHANNELS = []; // channel display names
 let PROMPTS = { subjects: [], twists: [], settings: [], daily: [] };
+const LS_REMOVED = "aas_removed_v1"; // baseline favorites she has un-hearted on this device
+
 let favs = load(LS_FAVS, []);
+let removedBaseline = load(LS_REMOVED, []);
+let baselineFavs = []; // "family favorites" shipped with the site (family-state.json)
 let supplyState = load(LS_SUPPLIES, null);
 if (!supplyState) {
   // migrate v1 checkboxes: checked meant "have it"
@@ -52,8 +56,22 @@ function videoById(id) {
   return VIDEOS.find((v) => v.id === id);
 }
 
+/* favorites = site-shipped family favorites (minus ones un-hearted here) + this device's own */
+function effectiveFavs() {
+  const seen = new Set();
+  const out = [];
+  [...baselineFavs.filter((id) => !removedBaseline.includes(id)), ...favs].forEach((id) => {
+    if (!seen.has(id)) { seen.add(id); out.push(id); }
+  });
+  return out;
+}
+
+function isFaved(id) {
+  return effectiveFavs().includes(id);
+}
+
 function cardHTML(v) {
-  const faved = favs.includes(v.id);
+  const faved = isFaved(v.id);
   return `
     <div class="vcard" data-id="${v.id}">
       <img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="">
@@ -70,7 +88,7 @@ function escapeHTML(s) {
 }
 
 function renderFavs() {
-  const favVideos = favs.map(videoById).filter(Boolean);
+  const favVideos = effectiveFavs().map(videoById).filter(Boolean);
   $("#favs-grid").innerHTML = favVideos.map(cardHTML).join("");
   $("#favs-empty").style.display = favVideos.length ? "none" : "block";
   $("#backup-favs").style.display = favVideos.length ? "inline" : "none";
@@ -130,8 +148,15 @@ document.addEventListener("click", (e) => {
   const heart = e.target.closest(".heart");
   if (heart) {
     const id = heart.closest(".vcard").dataset.id;
-    favs = favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id];
+    if (isFaved(id)) {
+      favs = favs.filter((f) => f !== id);
+      if (baselineFavs.includes(id) && !removedBaseline.includes(id)) removedBaseline.push(id);
+    } else {
+      if (!favs.includes(id)) favs.push(id);
+      removedBaseline = removedBaseline.filter((r) => r !== id);
+    }
     save(LS_FAVS, favs);
+    save(LS_REMOVED, removedBaseline);
     renderFavs();
     renderResults();
     return;
@@ -142,7 +167,7 @@ document.addEventListener("click", (e) => {
 
 $("#backup-favs").addEventListener("click", (e) => {
   e.stopPropagation();
-  const data = JSON.stringify(favs.map(videoById).filter(Boolean), null, 2);
+  const data = JSON.stringify(effectiveFavs().map(videoById).filter(Boolean), null, 2);
   navigator.clipboard?.writeText(data).then(
     () => { e.target.textContent = "copied! ✔️"; setTimeout(() => (e.target.textContent = "copy my list"), 2000); },
     () => alert(data)
@@ -253,6 +278,63 @@ $("#spin-btn").addEventListener("click", () => {
   }, 90);
 });
 
+/* ---------------- sync between devices ---------------- */
+
+function syncURL() {
+  const state = { f: effectiveFavs(), s: supplyState };
+  return location.origin + location.pathname + "#sync=" + btoa(JSON.stringify(state));
+}
+
+$("#sync-open").addEventListener("click", () => {
+  const url = syncURL();
+  const slot = $("#qr-slot");
+  slot.innerHTML = "";
+  if (typeof QRCode !== "undefined" && url.length <= 1800) {
+    new QRCode(slot, { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.L });
+  } else {
+    slot.innerHTML = `<p class="qr-note">${url.length > 1800
+      ? "Your list is too big for a QR code — use the copy link button instead!"
+      : "QR maker didn't load — use the copy link button instead!"}</p>`;
+  }
+  $("#sync-modal").classList.add("open");
+});
+
+$("#sync-copy").addEventListener("click", (e) => {
+  navigator.clipboard?.writeText(syncURL()).then(
+    () => { e.target.textContent = "copied! ✔️"; setTimeout(() => (e.target.textContent = "📋 Copy sync link"), 2000); },
+    () => prompt("Copy this link:", syncURL())
+  );
+});
+
+$("#sync-close").addEventListener("click", () => $("#sync-modal").classList.remove("open"));
+$("#sync-modal").addEventListener("click", (e) => {
+  if (e.target === $("#sync-modal")) $("#sync-modal").classList.remove("open");
+});
+
+function maybeImportSync(rerenderSupplies) {
+  if (!location.hash.startsWith("#sync=")) return;
+  try {
+    const incoming = JSON.parse(atob(decodeURIComponent(location.hash.slice(6))));
+    const n = (incoming.f || []).length;
+    if (confirm(`🔄 Bring over ${n} favorite${n === 1 ? "" : "s"} + supplies from your other device?`)) {
+      (incoming.f || []).forEach((id) => {
+        if (!favs.includes(id)) favs.push(id);
+        removedBaseline = removedBaseline.filter((r) => r !== id);
+      });
+      Object.assign(supplyState, incoming.s || {});
+      save(LS_FAVS, favs);
+      save(LS_REMOVED, removedBaseline);
+      save(LS_SUPPLIES, supplyState);
+      renderFavs();
+      renderResults();
+      rerenderSupplies();
+    }
+  } catch {
+    alert("Hmm, that sync link didn't work — try making a fresh one.");
+  }
+  history.replaceState(null, "", location.pathname);
+}
+
 /* ---------------- YouTube reachability check ---------------- */
 
 (function () {
@@ -270,10 +352,12 @@ Promise.all([
   fetch("videos.json").then((r) => r.json()).catch(() => ({ channels: [], videos: [] })),
   fetch("prompts.json").then((r) => r.json()),
   fetch("supplies.json").then((r) => r.json()),
-]).then(([vids, prompts, supplies]) => {
+  fetch("family-state.json").then((r) => r.json()).catch(() => ({ f: [] })),
+]).then(([vids, prompts, supplies, family]) => {
   CHANNELS = vids.channels;
   VIDEOS = vids.videos;
   PROMPTS = prompts;
+  baselineFavs = family.f || [];
   supplies.groups.forEach((g) => g.items.forEach((it) => {
     // "Watercolor paint set (pan style)" -> "watercolor paint set"
     supplyNames[it.id] = it.name.split("(")[0].trim().toLowerCase();
@@ -282,6 +366,7 @@ Promise.all([
   renderResults();
   renderSupplies(supplies.groups);
   setDaily();
+  maybeImportSync(() => renderSupplies(supplies.groups));
 
   $("#mode-all").addEventListener("click", () => {
     shopMode = false;
