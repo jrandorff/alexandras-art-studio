@@ -1,0 +1,41 @@
+name: Refresh video index
+
+on:
+  schedule:
+    - cron: "0 14 * * 1" # Mondays 14:00 UTC (~7am Pacific)
+  workflow_dispatch: {}
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yt-dlp
+        run: pip install yt-dlp
+
+      - name: Rebuild videos.json
+        run: python3 tools/build_video_index.py
+
+      - name: Sanity check (never ship a shrunken index)
+        run: |
+          python3 - <<'EOF'
+          import json
+          n = len(json.load(open("videos.json"))["videos"])
+          print(f"{n} videos in new index")
+          assert n >= 5000, "index suspiciously small — refusing to commit"
+          EOF
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet videos.json; then
+            echo "No new videos this week."
+            exit 0
+          fi
+          git config user.name "video-index-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add videos.json
+          git commit -m "Auto-refresh video index"
+          git push
