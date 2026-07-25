@@ -16,7 +16,7 @@
   <meta name="theme-color" content="#ffd6e8">
 
   <!-- bump ?v= on each deploy that changes these files: defeats stale browser caches -->
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
   <header>
@@ -120,6 +120,16 @@
       <div id="supplies-root"></div>
     </section>
 
+    <!-- ================= GALLERY ================= -->
+    <section id="view-gallery" class="view">
+      <div class="panel" id="featured-panel">
+        <h2>🌟 Today's Featured Masterpiece</h2>
+        <div id="featured-slot"></div>
+      </div>
+      <p class="section-label" id="gallery-label">🖼️ All Artwork</p>
+      <div id="gallery-grid" class="agrid"></div>
+    </section>
+
     <!-- ================= IDEAS ================= -->
     <section id="view-ideas" class="view">
       <div class="panel">
@@ -157,14 +167,26 @@
     </div>
   </div>
 
+  <!-- art modal -->
+  <div id="art-modal">
+    <div class="art-box">
+      <img id="art-full" alt="">
+      <div class="player-bar">
+        <span class="ptitle" id="art-title"></span>
+        <button id="art-close">Done ✔️</button>
+      </div>
+    </div>
+  </div>
+
   <nav>
     <button data-view="videos" class="active"><span class="ico">🎬</span>Videos</button>
     <button data-view="styles"><span class="ico">🎨</span>Styles</button>
     <button data-view="supplies"><span class="ico">🖍️</span>Supplies</button>
+    <button data-view="gallery"><span class="ico">🖼️</span>Gallery</button>
     <button data-view="ideas"><span class="ico">💡</span>Ideas</button>
   </nav>
 
   <script src="qrcode.min.js"></script>
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

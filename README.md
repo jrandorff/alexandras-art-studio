@@ -29,6 +29,20 @@ editable data files:
 | `prompts.json` | Idea Machine words + daily challenges — **add your own!** |
 | `supplies.json` | The supplies checklist |
 
+## Adding artwork to the Gallery
+
+The 🖼️ Gallery tab shows all of Alexandra's published art, plus a
+"Today's Featured Masterpiece" that rotates daily. To publish a piece
+(photo → AirDrop to the Mac → one command):
+
+```bash
+python3 tools/add_art.py ~/Downloads/IMG_1234.heic "Title She Picks"
+git add -A && git commit -m "Gallery: new art" && git push
+```
+
+**Everything in the gallery is publicly visible on the internet** — first-name
+titles only, and check photos for anything identifying before publishing.
+
 ## Syncing favorites & supplies between devices
 
 Favorites and supply check-offs live in each device's browser. To move them:

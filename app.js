@@ -278,6 +278,51 @@ $("#spin-btn").addEventListener("click", () => {
   }, 90);
 });
 
+/* ---------------- gallery ---------------- */
+
+let GALLERY = [];
+
+function renderGallery() {
+  if (!GALLERY.length) {
+    $("#featured-panel").style.display = "none";
+    $("#gallery-label").style.display = "none";
+    $("#gallery-grid").innerHTML =
+      `<p class="empty-note">No artwork yet — ask Dad to add your first masterpiece!</p>`;
+    return;
+  }
+  // same-all-day rotation, new masterpiece at midnight (like the daily challenge)
+  const days = Math.floor(Date.now() / 86400000);
+  const feat = GALLERY[days % GALLERY.length];
+  $("#featured-slot").innerHTML =
+    `<img src="${feat.src}" alt="${escapeHTML(feat.title)}" data-i="${GALLERY.indexOf(feat)}">
+     <p class="art-caption">“${escapeHTML(feat.title)}”</p>`;
+  $("#gallery-grid").innerHTML = GALLERY.map((a, i) =>
+    `<div class="acard" data-i="${i}">
+       <img loading="lazy" src="${a.src}" alt="${escapeHTML(a.title)}">
+       <p>${escapeHTML(a.title)}</p>
+     </div>`).join("");
+}
+
+function openArt(i) {
+  const a = GALLERY[i];
+  if (!a) return;
+  $("#art-full").src = a.src;
+  $("#art-title").textContent = `“${a.title}”`;
+  $("#art-modal").classList.add("open");
+}
+
+document.addEventListener("click", (e) => {
+  const card = e.target.closest(".acard");
+  if (card) return openArt(+card.dataset.i);
+  const featImg = e.target.closest("#featured-slot img");
+  if (featImg) openArt(+featImg.dataset.i);
+});
+
+$("#art-close").addEventListener("click", () => $("#art-modal").classList.remove("open"));
+$("#art-modal").addEventListener("click", (e) => {
+  if (e.target === $("#art-modal")) $("#art-modal").classList.remove("open");
+});
+
 /* ---------------- sync between devices ---------------- */
 
 function syncURL() {
@@ -353,7 +398,10 @@ Promise.all([
   fetch("prompts.json").then((r) => r.json()),
   fetch("supplies.json").then((r) => r.json()),
   fetch("family-state.json").then((r) => r.json()).catch(() => ({ f: [] })),
-]).then(([vids, prompts, supplies, family]) => {
+  fetch("gallery.json").then((r) => r.json()).catch(() => []),
+]).then(([vids, prompts, supplies, family, gallery]) => {
+  GALLERY = gallery;
+  renderGallery();
   CHANNELS = vids.channels;
   VIDEOS = vids.videos;
   PROMPTS = prompts;
