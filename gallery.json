@@ -3,5 +3,25 @@
     "src": "gallery/axolotl-with-a-boba-tea.jpg",
     "title": "Axolotl with a Boba Tea",
     "date": "2026-07-24"
+  },
+  {
+    "src": "gallery/kawaii-cinnamon-roll.jpg",
+    "title": "Kawaii Cinnamon Roll",
+    "date": "2026-07-29"
+  },
+  {
+    "src": "gallery/kawaii-s-mores.jpg",
+    "title": "Kawaii S'mores",
+    "date": "2026-07-29"
+  },
+  {
+    "src": "gallery/kawaii-unicorn-drink.jpg",
+    "title": "Kawaii Unicorn Drink",
+    "date": "2026-07-29"
+  },
+  {
+    "src": "gallery/kawaii-sushi-set.jpg",
+    "title": "Kawaii Sushi Set",
+    "date": "2026-07-29"
   }
 ]
