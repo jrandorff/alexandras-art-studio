@@ -40,6 +40,13 @@ python3 tools/add_art.py ~/Downloads/IMG_1234.heic "Title She Picks"
 git add -A && git commit -m "Gallery: new art" && git push
 ```
 
+Several at once — arguments come in FILE "TITLE" pairs, then one commit:
+
+```bash
+python3 tools/add_art.py penguin.heic "Penguin!" wolf.heic "Wolf Howling"
+git add -A && git commit -m "Gallery: 2 new pieces" && git push
+```
+
 **Everything in the gallery is publicly visible on the internet** — first-name
 titles only, and check photos for anything identifying before publishing.
 
