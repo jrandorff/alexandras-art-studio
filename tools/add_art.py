@@ -6,8 +6,10 @@
 
 Arguments come in FILE "TITLE" pairs — as many pairs as you like.
 Converts/resizes via sips (macOS built-in), writes gallery/<slug>.jpg,
-appends to gallery.json, then prints one commit command for the batch.
+appends to gallery.json, then commits and pushes so it goes live.
 Accepts HEIC, PNG, JPG — anything sips can read.
+
+Pass --no-push to stop after writing the files (commit by hand later).
 """
 import json
 import pathlib
@@ -38,8 +40,31 @@ def add_piece(src: pathlib.Path, title: str, data: list) -> str:
     return title
 
 
+def git(*cmd: str) -> subprocess.CompletedProcess:
+    return subprocess.run(["git", "-C", str(ROOT), *cmd], capture_output=True, text=True)
+
+
+def publish(label: str) -> None:
+    """Commit and push. Rebases first — the weekly index bot commits here too."""
+    git("add", "-A")
+    if git("commit", "-m", f"Gallery: {label}").returncode != 0:
+        sys.exit("nothing to commit — did the art already get published?")
+
+    pull = git("pull", "--rebase")
+    if pull.returncode != 0:
+        sys.exit(f"couldn't sync with GitHub:\n{pull.stderr}\nFix, then run: git push")
+
+    push = git("push")
+    if push.returncode != 0:
+        sys.exit(f"commit saved but push failed:\n{push.stderr}\nTry again with: git push")
+
+    print("\n🎉 published! it goes live in about a minute:")
+    print("   https://jrandorff.github.io/alexandras-art-studio/  (Gallery tab)")
+
+
 def main() -> None:
-    args = sys.argv[1:]
+    args = [a for a in sys.argv[1:] if a != "--no-push"]
+    do_push = "--no-push" not in sys.argv[1:]
     if not args or len(args) % 2 != 0:
         sys.exit(__doc__)
     pairs = [(pathlib.Path(f).expanduser(), t) for f, t in zip(args[::2], args[1::2])]
@@ -55,7 +80,10 @@ def main() -> None:
     gj.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 
     label = titles[0] if len(titles) == 1 else f"{len(titles)} new pieces"
-    print(f'now run:  git add -A && git commit -m "Gallery: {label}" && git push')
+    if do_push:
+        publish(label)
+    else:
+        print(f'\nnot pushed. to publish:  git add -A && git commit -m "Gallery: {label}" && git push')
 
 
 if __name__ == "__main__":

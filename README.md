@@ -32,20 +32,25 @@ editable data files:
 ## Adding artwork to the Gallery
 
 The 🖼️ Gallery tab shows all of Alexandra's published art, plus a
-"Today's Featured Masterpiece" that rotates daily. To publish a piece
-(photo → AirDrop to the Mac → one command):
+"Today's Featured Masterpiece" that rotates daily. Photo → AirDrop to the
+Mac → one command, which resizes, commits, and pushes it live:
 
 ```bash
+cd ~/Desktop/alexandras-art-studio
 python3 tools/add_art.py ~/Downloads/IMG_1234.heic "Title She Picks"
-git add -A && git commit -m "Gallery: new art" && git push
 ```
 
-Several at once — arguments come in FILE "TITLE" pairs, then one commit:
+**Run it from the repo folder** (that `cd` matters — the script writes the
+gallery relative to itself), and **quote any filename containing spaces**.
+
+Several at once — arguments come in FILE "TITLE" pairs, one commit for the batch:
 
 ```bash
 python3 tools/add_art.py penguin.heic "Penguin!" wolf.heic "Wolf Howling"
-git add -A && git commit -m "Gallery: 2 new pieces" && git push
 ```
+
+It prints a 🎉 when the art is pushed; it's live about a minute later. Add
+`--no-push` to write the files without publishing.
 
 **Everything in the gallery is publicly visible on the internet** — first-name
 titles only, and check photos for anything identifying before publishing.
