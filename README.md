@@ -8,9 +8,12 @@ checklists, and inspiration. Axolotl-themed by order of the client.
 
 ## Features
 
-- **🎬 Videos** — search ~5,800 drawing lessons, strictly limited to approved
+- **🎬 Videos** — search ~5,900 drawing lessons, strictly limited to approved
   channels (Art for Kids Hub, Draw So Cute). Tap 🩷 to save favorites
   (stored in the browser; "copy my list" backs them up to the clipboard).
+  A **🆕 New This Week** shelf shows what the weekly refresh just picked up
+  (the channels post ~8 a week between them), and new lessons wear a NEW
+  badge wherever they turn up.
 - **🎨 Styles** — how to draw realistic / cartoon / manga / watercolor / pixel art.
 - **🖍️ Supplies** — mark each item **✔️ Have** or **🛒 Need**; the shopping-list view
   shows only Need items, and the Idea Machine sometimes suggests making an idea

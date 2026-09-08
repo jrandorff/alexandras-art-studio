@@ -10,6 +10,8 @@ const LS_FAVS = "aas_favs_v1";
 const LS_SUPPLIES = "aas_supplies_v2"; // values: "have" | "need" (unset = neither)
 
 let VIDEOS = [];   // {id, t (title), c (channel index)}
+let FIRST_SEEN = {};  // id -> ISO date the weekly refresh first saw it
+const NEW_DAYS = 7;
 let CHANNELS = []; // channel display names
 let PROMPTS = { subjects: [], twists: [], settings: [], daily: [] };
 const LS_REMOVED = "aas_removed_v1"; // baseline favorites she has un-hearted on this device
@@ -57,6 +59,20 @@ function videoById(id) {
   return VIDEOS.find((v) => v.id === id);
 }
 
+/* videos the weekly refresh picked up in the last NEW_DAYS */
+function recentIds() {
+  const cutoff = new Date(Date.now() - NEW_DAYS * 864e5).toISOString().slice(0, 10);
+  return new Set(Object.keys(FIRST_SEEN).filter((id) => FIRST_SEEN[id] >= cutoff));
+}
+let NEW_SET = new Set();
+
+function renderNew() {
+  NEW_SET = recentIds();
+  const list = VIDEOS.filter((v) => NEW_SET.has(v.id));
+  $("#new-section").style.display = list.length ? "" : "none";
+  $("#new-grid").innerHTML = interleave(list).map(cardHTML).join("");
+}
+
 /* favorites = site-shipped family favorites (minus ones un-hearted here) + this device's own */
 function effectiveFavs() {
   const seen = new Set();
@@ -78,6 +94,7 @@ function cardHTML(v) {
       <img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="">
       <div class="vtitle">${escapeHTML(v.t)}</div>
       <div class="vchan">${escapeHTML(CHANNELS[v.c] || "")}</div>
+      ${NEW_SET.has(v.id) ? '<span class="newbadge">NEW</span>' : ""}
       <button class="heart ${faved ? "faved" : ""}" aria-label="favorite">🩷</button>
     </div>`;
 }
@@ -129,8 +146,9 @@ function renderResults() {
     list = VIDEOS.filter((v) => v.t.toLowerCase().includes("axolotl"));
     label = "🩷 Axolotl picks";
   }
-  // searching takes over the screen; favorites come back when the box is cleared
+  // searching takes over the screen; the browsing shelves come back when it's cleared
   $("#favs-section").style.display = q ? "none" : "";
+  $("#new-section").style.display = q || !NEW_SET.size ? "none" : "";
   const shown = interleave(list).slice(0, MAX_RESULTS);
   $("#results-label").textContent = label;
   $("#results-grid").innerHTML = shown.map(cardHTML).join("");
@@ -475,6 +493,8 @@ Promise.all([
   renderGallery();
   CHANNELS = vids.channels;
   VIDEOS = vids.videos;
+  FIRST_SEEN = vids.firstSeen || {};
+  NEW_SET = recentIds();
   PROMPTS = prompts;
   baselineFavs = family.f || [];
   supplies.groups.forEach((g) => g.items.forEach((it) => {
@@ -482,6 +502,7 @@ Promise.all([
     supplyNames[it.id] = it.name.split("(")[0].trim().toLowerCase();
   }));
   renderFavs();
+  renderNew();
   renderResults();
   renderSupplies(supplies.groups);
   setDaily();

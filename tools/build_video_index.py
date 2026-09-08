@@ -13,6 +13,7 @@ import json
 import pathlib
 import subprocess
 import sys
+from datetime import date, timedelta
 
 CHANNELS = [
     ("https://www.youtube.com/@artforkidshub/videos", "Art for Kids Hub"),
@@ -20,6 +21,7 @@ CHANNELS = [
 ]
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "videos.json"
+FRESH_DAYS = 30          # how long a video stays in the "recently arrived" list
 
 
 def fetch(url: str) -> dict:
@@ -49,9 +51,25 @@ def main() -> None:
             count += 1
         print(f"{channels[ci]}: {count} videos", file=sys.stderr)
 
-    OUT.write_text(json.dumps({"channels": channels, "videos": videos},
+    # Track when each video first showed up, so the app can show "New this week".
+    # Anything older than FRESH_DAYS is dropped, keeping the map tiny.
+    today = date.today().isoformat()
+    cutoff = (date.today() - timedelta(days=FRESH_DAYS)).isoformat()
+    previous = json.loads(OUT.read_text()) if OUT.exists() else None
+    first_seen = {}
+    if previous:
+        known = {v["id"] for v in previous["videos"]}
+        first_seen = {i: d for i, d in previous.get("firstSeen", {}).items() if d >= cutoff}
+        arrived = [v["id"] for v in videos if v["id"] not in known]
+        for i in arrived:
+            first_seen[i] = today
+        print(f"{len(arrived)} new since the last refresh", file=sys.stderr)
+    # (no previous index: start empty rather than flagging all 5,000 as brand new)
+
+    OUT.write_text(json.dumps({"channels": channels, "videos": videos, "firstSeen": first_seen},
                               ensure_ascii=False, separators=(",", ":")))
-    print(f"wrote {OUT} ({OUT.stat().st_size // 1024} KB, {len(videos)} videos)", file=sys.stderr)
+    print(f"wrote {OUT} ({OUT.stat().st_size // 1024} KB, {len(videos)} videos, "
+          f"{len(first_seen)} flagged recent)", file=sys.stderr)
 
 
 if __name__ == "__main__":
