@@ -15,6 +15,9 @@ checklists, and inspiration. Axolotl-themed by order of the client.
 - **🖍️ Supplies** — mark each item **✔️ Have** or **🛒 Need**; the shopping-list view
   shows only Need items, and the Idea Machine sometimes suggests making an idea
   with a supply you have.
+- **🧩 Puzzle** — earn 4 jigsaw pieces every time you finish a drawing, then
+  assemble a 36-piece mystery axolotl. Finished axolotls go in your collection.
+
 - **💡 Ideas** — a daily drawing challenge + the Idea Machine
   (subject + twist + setting spinner).
 
@@ -54,6 +57,20 @@ It prints a 🎉 when the art is pushed; it's live about a minute later. Add
 
 **Everything in the gallery is publicly visible on the internet** — first-name
 titles only, and check photos for anything identifying before publishing.
+
+## The axolotl puzzle
+
+Pieces are earned two ways, whichever happens first: tapping **🎨 I drew it!** in
+the video player, or letting a video play to the end (YouTube's player API tells
+us). Each video pays once. 4 pieces per drawing x 9 drawings = one 36-piece puzzle.
+
+The pictures aren't image files — `axolotl.js` *draws* each one from a colour
+recipe, so adding a new axolotl is a few lines in its `MORPHS` list (name,
+colours, marking style, and a real fact shown when the puzzle is finished).
+All 12 morphs are real axolotl genetics. `puzzle.js` cuts the picture into
+interlocking pieces and handles the board.
+
+Progress is per-device like everything else, and rides along on the sync link.
 
 ## Syncing favorites & supplies between devices
 

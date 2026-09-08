@@ -16,7 +16,7 @@
   <meta name="theme-color" content="#ffd6e8">
 
   <!-- bump ?v= on each deploy that changes these files: defeats stale browser caches -->
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
   <header>
@@ -130,6 +130,20 @@
       <div id="gallery-grid" class="agrid"></div>
     </section>
 
+    <!-- ================= PUZZLE ================= -->
+    <section id="view-puzzle" class="view">
+      <div class="panel">
+        <h2>🧩 Mystery Axolotl Puzzle</h2>
+        <p class="pz-progress" id="pz-progress"></p>
+        <div id="pz-boardwrap"><div id="pz-board"></div></div>
+        <p class="pz-hint">Drag a piece onto the board — or tap a piece, then tap where it goes.</p>
+        <div id="pz-tray"></div>
+      </div>
+
+      <p class="section-label">🏅 My Axolotl Collection</p>
+      <div id="pz-collection" class="pz-grid"></div>
+    </section>
+
     <!-- ================= IDEAS ================= -->
     <section id="view-ideas" class="view">
       <div class="panel">
@@ -156,12 +170,24 @@
     </div>
   </div>
 
+  <!-- puzzle completion -->
+  <div id="pz-finish">
+    <div class="pz-finish-box">
+      <p class="pz-finish-kicker">✨ Puzzle complete! You discovered… ✨</p>
+      <img id="pz-finish-img" alt="">
+      <h2 id="pz-finish-name"></h2>
+      <p id="pz-finish-fact"></p>
+      <button id="pz-finish-btn">Add to my collection 🏅</button>
+    </div>
+  </div>
+
   <!-- player modal -->
   <div id="player-modal">
     <div class="player-box">
       <div class="frame-wrap" id="frame-wrap"></div>
       <div class="player-bar">
         <span class="ptitle" id="player-title"></span>
+        <button id="drew-it">🎨 I drew it!</button>
         <button id="player-close">Done ✔️</button>
       </div>
     </div>
@@ -184,9 +210,12 @@
     <button data-view="supplies"><span class="ico">🖍️</span>Supplies</button>
     <button data-view="gallery"><span class="ico">🖼️</span>Gallery</button>
     <button data-view="ideas"><span class="ico">💡</span>Ideas</button>
+    <button data-view="puzzle"><span class="ico">🧩</span>Puzzle</button>
   </nav>
 
   <script src="qrcode.min.js"></script>
-  <script src="app.js?v=6"></script>
+  <script src="axolotl.js?v=7"></script>
+  <script src="puzzle.js?v=7"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

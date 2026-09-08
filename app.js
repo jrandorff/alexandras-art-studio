@@ -45,6 +45,7 @@ document.querySelectorAll("nav button").forEach((btn) => {
     btn.classList.add("active");
     $("#view-" + btn.dataset.view).classList.add("active");
     window.scrollTo(0, 0);
+    if (btn.dataset.view === "puzzle") pzRender();
   });
 });
 
@@ -176,20 +177,78 @@ $("#backup-favs").addEventListener("click", (e) => {
 
 /* ---------------- player ---------------- */
 
+let playingId = null;
+let ytPlayer = null;
+let ytReady = false;
+
+// The YouTube API lets us notice when a video actually ends. It is strictly a
+// bonus: if it fails to load, we fall back to a plain iframe and the
+// "I drew it!" button still awards pieces.
+(function loadYouTubeAPI() {
+  window.onYouTubeIframeAPIReady = () => { ytReady = true; };
+  const s = document.createElement("script");
+  s.src = "https://www.youtube.com/iframe_api";
+  s.async = true;
+  s.onerror = () => { ytReady = false; };
+  document.head.appendChild(s);
+})();
+
 function openPlayer(id) {
   const v = videoById(id);
   if (!v) return;
+  playingId = id;
+  resetDrewBtn(id);
   $("#player-title").textContent = v.t;
   // rel=0 keeps end-of-video suggestions within the same channel
-  $("#frame-wrap").innerHTML =
-    `<iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&autoplay=1"
-       title="${escapeHTML(v.t)}"
-       allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen
-       referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+  if (ytReady && window.YT && window.YT.Player) {
+    $("#frame-wrap").innerHTML = '<div id="yt-target"></div>';
+    ytPlayer = new YT.Player("yt-target", {
+      videoId: id,
+      host: "https://www.youtube-nocookie.com",
+      playerVars: { rel: 0, autoplay: 1, playsinline: 1 },
+      events: {
+        onStateChange: (e) => {
+          if (e.data === YT.PlayerState.ENDED) awardForVideo(id, true);
+        },
+      },
+    });
+  } else {
+    $("#frame-wrap").innerHTML =
+      `<iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&autoplay=1"
+         title="${escapeHTML(v.t)}"
+         allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen
+         referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+  }
   $("#player-modal").classList.add("open");
 }
 
+/* ---------------- earning puzzle pieces ---------------- */
+
+function resetDrewBtn(id) {
+  const btn = $("#drew-it");
+  if (!btn) return;
+  const already = (pzLoad().awarded || []).includes(id);
+  btn.textContent = already ? "🏅 already earned" : "🎨 I drew it!";
+  btn.classList.toggle("earned", already);
+}
+
+function awardForVideo(id, auto) {
+  const btn = $("#drew-it");
+  const res = pzAward(id);
+  if (!res.ok) { if (btn) { btn.textContent = "🏅 already earned"; btn.classList.add("earned"); } return; }
+  if (btn) {
+    btn.textContent = res.won
+      ? `🧩 +${res.won} piece${res.won === 1 ? "" : "s"}!`
+      : "🧩 saved for your next puzzle!";
+    btn.classList.add("earned");
+  }
+  if (auto) console.log("puzzle: video finished, pieces awarded");
+}
+
 function closePlayer() {
+  if (ytPlayer && ytPlayer.destroy) { try { ytPlayer.destroy(); } catch {} }
+  ytPlayer = null;
+  playingId = null;
   $("#frame-wrap").innerHTML = ""; // removing the iframe stops playback
   $("#player-modal").classList.remove("open");
 }
@@ -326,7 +385,9 @@ $("#art-modal").addEventListener("click", (e) => {
 /* ---------------- sync between devices ---------------- */
 
 function syncURL() {
-  const state = { f: effectiveFavs(), s: supplyState };
+  const p = pzLoad();
+  const state = { f: effectiveFavs(), s: supplyState,
+                  p: { puzzle: p.puzzle, unlocked: p.unlocked, placed: p.placed, bank: p.bank, done: p.done } };
   return location.origin + location.pathname + "#sync=" + btoa(JSON.stringify(state));
 }
 
@@ -367,6 +428,16 @@ function maybeImportSync(rerenderSupplies) {
         removedBaseline = removedBaseline.filter((r) => r !== id);
       });
       Object.assign(supplyState, incoming.s || {});
+      if (incoming.p) {
+        // puzzle progress: keep whichever device is further along, so a sync
+        // can never wipe out a nearly-finished puzzle
+        const mine = pzLoad(), them = incoming.p;
+        const score = (x) => (x.done || []).length * 1000 + (x.placed || []).length;
+        if (score(them) >= score(mine)) {
+          Object.assign(mine, them);
+          localStorage.setItem("aas_puzzle_v1", JSON.stringify(mine));
+        }
+      }
       save(LS_FAVS, favs);
       save(LS_REMOVED, removedBaseline);
       save(LS_SUPPLIES, supplyState);
@@ -415,6 +486,14 @@ Promise.all([
   renderSupplies(supplies.groups);
   setDaily();
   maybeImportSync(() => renderSupplies(supplies.groups));
+
+  pzLoad();
+  wireDrag();
+  $("#drew-it").addEventListener("click", () => { if (playingId) awardForVideo(playingId, false); });
+  $("#pz-finish-btn").addEventListener("click", nextPuzzle);
+  window.addEventListener("resize", () => {
+    if (document.getElementById("view-puzzle").classList.contains("active")) pzRender();
+  });
 
   $("#mode-all").addEventListener("click", () => {
     shopMode = false;
